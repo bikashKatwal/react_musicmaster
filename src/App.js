@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import axios from 'axios';
 
 class App extends Component {
 
@@ -8,6 +9,17 @@ class App extends Component {
 
     updateArtistQuery = (event) => {
         this.setState({artistQuery: event.target.value});
+    };
+
+    searchArtist = async () => {
+        const request = await axios.get(`https://spotify-api-wrapper.appspot.com/artist/${this.state.artistQuery}`);
+        console.log("Request", request.data);
+    };
+
+    handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            this.searchArtist();
+        }
     };
 
     render() {
@@ -20,10 +32,15 @@ class App extends Component {
                         <div className="input-group mb-3">
                             <input type="text"
                                    onChange={this.updateArtistQuery}
+                                   onKeyPress={this.handleKeyPress}
                                    className="form-control" placeholder="Search for an Artist"
                                    aria-label="Search for an Artist" aria-describedby="basic-addon2"/>
                             <div className="input-group-append">
-                                <button className="btn btn-outline-secondary" type="button">Search</button>
+                                <button
+                                    onClick={this.searchArtist}
+
+                                    className="btn btn-outline-secondary" type="button">Search
+                                </button>
                             </div>
                         </div>
                     </div>
