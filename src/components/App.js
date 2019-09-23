@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import Artists from "./Artists";
+import Tracks from "./Tracks";
 
 const baseAPIUrl = 'https://spotify-api-wrapper.appspot.com';
 
@@ -9,7 +10,7 @@ class App extends Component {
     state = {
         artistQuery: '',
         artist: null,
-        tracks:[]
+        tracks: []
     };
 
     updateArtistQuery = (event) => {
@@ -23,7 +24,7 @@ class App extends Component {
                 const artist = response.data.artists.items[0];
                 this.setState({artist});
                 const tracksData = await axios.get(`${baseAPIUrl}/artist/${artist.id}/top-tracks`);
-                this.setState({tracks:tracksData.data.tracks});
+                this.setState({tracks: tracksData.data.tracks});
 
             }
 
@@ -39,7 +40,7 @@ class App extends Component {
     };
 
     render() {
-        console.log('this.state', this.state.artist);
+        console.log('this.state', this.state.tracks);
         return (
             <div className="container">
                 <h2>Music Master</h2>
@@ -65,6 +66,7 @@ class App extends Component {
                 </div>
                 <div>
                     <Artists artist={this.state.artist}/>
+                    <Tracks tracks={this.state.tracks}/>
                 </div>
             </div>
         );
