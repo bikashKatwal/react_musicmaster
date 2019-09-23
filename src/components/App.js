@@ -1,10 +1,15 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Artists from "./Artists";
+
+const baseAPIUrl = 'https://spotify-api-wrapper.appspot.com';
 
 class App extends Component {
 
     state = {
-        artistQuery: ''
+        artistQuery: '',
+        artist: null,
+        tracks:[]
     };
 
     updateArtistQuery = (event) => {
@@ -12,8 +17,19 @@ class App extends Component {
     };
 
     searchArtist = async () => {
-        const request = await axios.get(`https://spotify-api-wrapper.appspot.com/artist/${this.state.artistQuery}`);
-        console.log("Request", request.data);
+        try {
+            const response = await axios.get(`${baseAPIUrl}/artist/${this.state.artistQuery}`);
+            if (response.data.artists.total > 0) {
+                const artist = response.data.artists.items[0];
+                this.setState({artist});
+                const tracksData = await axios.get(`${baseAPIUrl}/artist/${artist.id}/top-tracks`);
+                this.setState({tracks:tracksData.data.tracks});
+
+            }
+
+        } catch (error) {
+            alert(error.message);
+        }
     };
 
     handleKeyPress = (event) => {
@@ -23,6 +39,7 @@ class App extends Component {
     };
 
     render() {
+        console.log('this.state', this.state.artist);
         return (
             <div className="container">
                 <h2>Music Master</h2>
@@ -47,7 +64,7 @@ class App extends Component {
                     <div className="col-4"></div>
                 </div>
                 <div>
-                    <p>{this.state.artistQuery}</p>
+                    <Artists artist={this.state.artist}/>
                 </div>
             </div>
         );
